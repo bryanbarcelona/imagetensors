@@ -1,0 +1,62 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+build/
+dist/
+*.whl
+*.tar.gz
+*.egg-info/
+*.egg
+
+# Virtual environments
+.venv/
+env/
+venv/
+ENV/
+
+# IDE and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+
+# Logs and databases
+*.log
+*.sqlite3
+
+# Testing
+.coverage
+.pytest_cache/
+.coverage.*
+htmlcov/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# uv and pip
+uv.lock
+pip-wheel-metadata/
+.cache/
+
+# Local config overrides
+.pyup.yml
+.pre-commit-config.yaml
+.local.env
+.env
+
+# Development scripts
+/testing_imagetensors.py
+/legacy/
+
+# macOS metadata
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
