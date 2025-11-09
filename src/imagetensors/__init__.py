@@ -24,4 +24,4 @@ from .factory import ImageReader
 from .models import ImageData, Metadata
 from .converters import save_as_tif
 
-__all__ = ["ImageReader", "ImageData", "Metadata", "save_as_tif"]
+__all__ = ["ImageReader", "ImageData", "Metadata", "save_as_tif", "save_all_as_tif"]
