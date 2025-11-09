@@ -11,3 +11,6 @@ dependencies = [
     "readlif>=0.6.6",
     "tifffile>=2025.10.16",
 ]
+
+[tool.hatch.version]
+source = "vcs"
