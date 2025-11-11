@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional
+from typing import Optional, cast, Any 
 
 import numpy as np
 
@@ -37,7 +37,7 @@ class Metadata:
     # Display ranges (for ImageJ compatibility)
     min: float = 0.0
     max: float = 0.0
-    Ranges: Optional[tuple] = None
+    Ranges: Optional[tuple[float, float]] = None
     
     # Additional metadata
     Info: Optional[str] = None
@@ -58,7 +58,7 @@ class Metadata:
             return 0.0
         return self.z_range / (self.slices - 1)
     
-    def to_imagej_metadata(self) -> dict:
+    def to_imagej_metadata(self) -> dict[str, object]:
         """Convert to ImageJ-compatible metadata dictionary."""
         return {
             "axes": "TZCYX",
@@ -88,7 +88,7 @@ class ImageData:
     array: np.ndarray  # Shape: (T, Z, C, Y, X)
     metadata: Metadata
     
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Validate array dimensions."""
         if self.array.ndim != 5:
             raise ValueError(
@@ -96,12 +96,12 @@ class ImageData:
             )
     
     @property
-    def shape(self) -> tuple:
+    def shape(self) -> tuple[int, int, int, int, int]:
         """Array shape (T, Z, C, Y, X)."""
-        return self.array.shape
+        return cast(tuple[int, int, int, int, int], self.array.shape)
     
     @property
-    def dtype(self):
+    def dtype(self) ->  np.dtype[Any]:
         """Array data type."""
         return self.array.dtype
     

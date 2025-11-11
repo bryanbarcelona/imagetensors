@@ -4,17 +4,14 @@ Provides detailed metadata extraction from Zeiss CZI files using czitools.
 Falls back to basic extraction if czitools is not available.
 """
 
-from pathlib import Path
-from typing import Optional
-
-import numpy as np
+from typing import Optional, cast, List, Dict, Any
 
 
 def get_czi_metadata(
     path: str,
     phase_index: Optional[int] = None,
     num_phases: Optional[int] = None,
-) -> dict:
+) -> Dict[str, Any]:
     """Extract metadata from CZI file.
     
     Args:
@@ -35,7 +32,7 @@ def _extract_with_czitools(
     path: str,
     phase_index: Optional[int] = None,
     num_phases: Optional[int] = None,
-) -> dict:
+) -> Dict[str, Any]:
     """Extract detailed metadata using czitools library."""
     from czitools.metadata_tools.scaling import CziScaling
     from czitools.metadata_tools.dimension import CziDimensions
@@ -56,7 +53,7 @@ def _extract_with_czitools(
         CziBoundingBox,
     ]
     
-    combined_metadata = {}
+    combined_metadata: Dict[str, Dict[str, Any]] = {}
     
     # Extract metadata from each class
     for metadata_class in metadata_classes:
@@ -97,10 +94,10 @@ def _extract_with_czitools(
 
 
 def _split_channel_info_by_phase(
-    metadata_dict: dict,
+    metadata_dict: Dict[str, Any],
     phase_index: int,
     num_phases: int,
-) -> dict:
+) -> Dict[str, Any]:
     """Split channel info for multi-phase CZI files.
     
     Args:
@@ -119,7 +116,7 @@ def _split_channel_info_by_phase(
     return metadata_dict
 
 
-def _restructure_channel_info(metadata_dict: dict) -> dict:
+def _restructure_channel_info(metadata_dict: Dict[str, Any]) -> Dict[str, Any]:
     """Restructure channel info from lists to per-channel dicts.
     
     Args:
@@ -161,7 +158,7 @@ def _restructure_channel_info(metadata_dict: dict) -> dict:
     return metadata_dict
 
 
-def _extract_basic(path: str) -> dict:
+def _extract_basic(path: str) -> Dict[str, Dict[str, Any]]:
     """Extract basic metadata without czitools (fallback).
     
     This provides minimal metadata when czitools is not installed.
@@ -169,9 +166,11 @@ def _extract_basic(path: str) -> dict:
     from czifile import CziFile
     
     with CziFile(path) as czi:
-        dimension_map = dict(zip(czi.axes, czi.shape))
+        axes = cast(List[str], czi.axes)
+        shape = cast(List[int], czi.shape)
+        dimension_map = dict(zip(axes, shape))
         
-        metadata = {
+        metadata: Dict[str, Dict[str, Any]] = {
             "Dimensions": {},
             "Scaling": {},
             "FileInfo": {"czisource": path},
@@ -186,19 +185,33 @@ def _extract_basic(path: str) -> dict:
         try:
             import xml.etree.ElementTree as ET
             xml_str = czi.metadata()
+
+            if not xml_str:
+                raise ValueError("Metadata string is empty or None")
+            
             root = ET.fromstring(xml_str)
             
             ns = {'czi': 'http://www.zeiss.com/microscopy/productdata/schemas/2012/czi'}
             
             scaling = root.find('.//czi:Scaling', ns)
-            if scaling is not None:
-                for item in scaling.findall('czi:Items/czi:Distance', ns):
-                    axis_id = item.get('Id')
-                    value = float(item.find('czi:Value', ns).text)
-                    
-                    if axis_id:
-                        # Convert to micrometers
-                        metadata["Scaling"][axis_id] = value * 1e6
+
+            if scaling is None:
+                # If scaling node is missing, jump straight to the except block's fallback
+                raise ValueError("Scaling node not found in metadata")
+            
+            for item in scaling.findall('czi:Items/czi:Distance', ns):
+                axis_id = item.get('Id')
+                value_node = item.find('czi:Value', ns)
+                
+                # GUARD CLAUSE 3: Continue loop if necessary data is missing in the item
+                if not axis_id or value_node is None or value_node.text is None:
+                    continue # Skip to the next item in the loop
+
+                value = float(value_node.text)
+                
+                # Convert to micrometers
+                metadata["Scaling"][axis_id] = value * 1e6
+
         except Exception:
             # Fallback values if XML parsing fails
             metadata["Scaling"] = {"X": 1.0, "Y": 1.0, "Z": 1.0, "T": 1.0}

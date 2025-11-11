@@ -1,6 +1,10 @@
 """Leica LIF format reader."""
 
-from typing import Iterator
+from __future__ import annotations
+from typing import Iterator, TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from readlif.reader import LifImage
 
 import numpy as np
 from readlif.reader import LifFile
@@ -16,7 +20,7 @@ class LifImageReader(BaseImageReader):
     Each series is yielded as a separate ImageData object.
     """
     
-    def __init__(self, image_path: str, override_pixel_size_um: float = None):
+    def __init__(self, image_path: str, override_pixel_size_um: float | None = None):
         super().__init__(image_path, override_pixel_size_um)
         self._lif_file = LifFile(str(self.path))
     
@@ -58,7 +62,7 @@ class LifImageReader(BaseImageReader):
             
             yield ImageData(array=array, metadata=metadata)
     
-    def _build_array(self, lif_image, metadata: Metadata) -> np.ndarray:
+    def _build_array(self, lif_image: LifImage, metadata: Metadata) -> np.ndarray:
         """Build 5D array from LIF image."""
         # Collect all frames
         channels_data = []
@@ -83,7 +87,7 @@ class LifImageReader(BaseImageReader):
         
         return array
     
-    def _calculate_ranges(self, array: np.ndarray) -> dict:
+    def _calculate_ranges(self, array: np.ndarray) -> dict[str, Any]:
         """Calculate display ranges for ImageJ."""
         ranges = []
         for c in range(array.shape[2]):  # channels

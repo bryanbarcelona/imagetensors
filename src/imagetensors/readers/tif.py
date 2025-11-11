@@ -1,6 +1,6 @@
 """TIFF format reader."""
 
-from typing import Iterator
+from typing import Iterator, cast, Any
 
 import numpy as np
 import tifffile
@@ -15,7 +15,7 @@ class TifImageReader(BaseImageReader):
     Supports ImageJ-style TIFF with metadata.
     """
     
-    def __init__(self, image_path: str, override_pixel_size_um: float = None):
+    def __init__(self, image_path: str, override_pixel_size_um: float | None = None):
         super().__init__(image_path, override_pixel_size_um)
     
     def read(self) -> Iterator[ImageData]:
@@ -74,16 +74,18 @@ class TifImageReader(BaseImageReader):
     
     def _get_resolution(self, tif: tifffile.TiffFile, tag_code: int) -> float:
         """Extract resolution from TIFF tags."""
-        if tag_code not in tif.pages[0].tags:
-            return 1.0
+        first_page = cast(Any, tif.pages[0])
+
+        if tag_code not in first_page.tags:
+                return 1.0
         
-        res_value = tif.pages[0].tags[tag_code].value
+        res_value = first_page.tags[tag_code].value
         
         if isinstance(res_value, tuple) and len(res_value) == 2:
             numerator, denominator = res_value
             return float(numerator) / float(denominator)
         
-        return float(res_value)
+        return float(cast(Any, res_value))
     
     def _expand_to_5d(self, array: np.ndarray, axes: str) -> np.ndarray:
         """Expand array to 5D TZCYX format."""
@@ -98,7 +100,7 @@ class TifImageReader(BaseImageReader):
         
         return array
     
-    def _parse_info_string(self, info_str: str) -> dict:
+    def _parse_info_string(self, info_str: str) -> dict[str, str]:
         """Parse ImageJ Info string into configuration dict."""
         config = {}
         
@@ -116,7 +118,7 @@ class TifImageReader(BaseImageReader):
         
         return config
     
-    def _calculate_ranges(self, array: np.ndarray) -> dict:
+    def _calculate_ranges(self, array: np.ndarray) -> dict[str, Any]:
         """Calculate display ranges for ImageJ."""
         ranges = []
         for c in range(array.shape[2]):  # channels

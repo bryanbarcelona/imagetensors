@@ -1,16 +1,21 @@
 """Image conversion utilities."""
 
+from __future__ import annotations
+from typing import TYPE_CHECKING
+
 from pathlib import Path
 
 import tifffile
 
 from .models import ImageData
 
+if TYPE_CHECKING:
+    from imagetensors import ImageReader
 
 def save_as_tif(
     image_data: ImageData,
-    output_path: str,
-    compression: str = None,
+    output_path: str | Path,
+    compression: str | None = None,
 ) -> Path:
     """Save ImageData as ImageJ-compatible TIFF.
     
@@ -39,10 +44,10 @@ def save_as_tif(
 
 
 def save_all_as_tif(
-    reader,
-    output_dir: str,
-    name_template: str = None,
-    compression: str = None,
+    reader : ImageReader,
+    output_dir: str | Path,
+    name_template: str | None = None,
+    compression: str | None = None,
 ) -> list[Path]:
     """Save all images from a reader as TIFF files.
     
@@ -70,6 +75,9 @@ def save_all_as_tif(
         else:
             filename = image_data.metadata.image_name
         
+        if filename is None:
+            raise ValueError("Filename cannot be None")
+
         output_path = output_dir / filename
         save_as_tif(image_data, output_path, compression)
         saved_paths.append(output_path)

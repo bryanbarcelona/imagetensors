@@ -1,6 +1,6 @@
 """Olympus OIB format reader."""
 
-from typing import Iterator
+from typing import Iterator, Any
 
 import numpy as np
 from oiffile import OifFile
@@ -15,7 +15,7 @@ class OibImageReader(BaseImageReader):
     OIB files typically contain a single image.
     """
     
-    def __init__(self, image_path: str, override_pixel_size_um: float = None):
+    def __init__(self, image_path: str, override_pixel_size_um: float | None = None):
         super().__init__(image_path, override_pixel_size_um)
         self._oib_file = OifFile(str(self.path))
     
@@ -85,7 +85,7 @@ class OibImageReader(BaseImageReader):
         
         yield ImageData(array=array, metadata=metadata)
     
-    def _calculate_ranges(self, array: np.ndarray) -> dict:
+    def _calculate_ranges(self, array: np.ndarray) -> dict[str, Any]:
         """Calculate display ranges for ImageJ."""
         ranges = []
         for c in range(array.shape[2]):  # channels
@@ -99,7 +99,7 @@ class OibImageReader(BaseImageReader):
             'max': float(array.max()),
         }
     
-    def __del__(self):
+    def __del__(self) -> None:
         """Clean up file handle."""
         if hasattr(self, '_oib_file') and self._oib_file:
             self._oib_file.close()

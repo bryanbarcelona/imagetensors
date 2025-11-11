@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Iterator
 import numpy as np
 
-from .models import ImageData, Metadata
+from .models import ImageData
 
 
 class BaseImageReader(ABC):
@@ -16,7 +16,7 @@ class BaseImageReader(ABC):
     with standardized 5D arrays (TZCYX) and metadata.
     """
     
-    def __init__(self, image_path: str, override_pixel_size_um: float = None):
+    def __init__(self, image_path: str, override_pixel_size_um: float | None = None):
         """Initialize reader.
         
         Args:
@@ -42,7 +42,7 @@ class BaseImageReader(ABC):
         """Allow iteration over reader."""
         return self.read()
     
-    def _build_info_string(self, array: "np.ndarray", config: dict = None) -> str:
+    def _build_info_string(self, array: "np.ndarray", config: dict[str, str] | None = None) -> str:
         """Build ImageJ-compatible info string.
         
         Args:
@@ -87,7 +87,7 @@ class BaseImageReader(ABC):
         
         return info
     
-    def _flatten_config(self, config: dict, parent_keys: list = None) -> str:
+    def _flatten_config(self, config: dict[str, str], parent_keys: list[str] | None = None) -> str:
         """Flatten nested configuration dictionary to string.
         
         Args:

@@ -1,6 +1,6 @@
 """Zeiss CZI format reader."""
 
-from typing import Iterator
+from typing import Iterator, List, Dict, Any, cast
 
 import numpy as np
 from czifile import CziFile
@@ -20,14 +20,17 @@ class CziImageReader(BaseImageReader):
     falls back to basic extraction otherwise.
     """
     
-    def __init__(self, image_path: str, override_pixel_size_um: float = None):
+    def __init__(self, image_path: str, override_pixel_size_um: float | None = None):
         super().__init__(image_path, override_pixel_size_um)
         self._czi_file = CziFile(str(self.path))
         self._dimension_map = self._map_dimensions()
     
-    def _map_dimensions(self) -> dict:
+    def _map_dimensions(self)-> Dict[str, int]:
         """Map CZI axes to their sizes."""
-        return dict(zip(self._czi_file.axes, self._czi_file.shape))
+        axes = cast(List[str], self._czi_file.axes)
+        shape = cast(List[int], self._czi_file.shape)
+        dimension_map: Dict[str, int] = dict(zip(axes, shape))
+        return dimension_map
     
     def read(self) -> Iterator[ImageData]:
         """Read all phases from the CZI file."""
@@ -119,7 +122,7 @@ class CziImageReader(BaseImageReader):
             
             yield ImageData(array=phase_tensor, metadata=metadata)
     
-    def _calculate_ranges(self, array: np.ndarray) -> dict:
+    def _calculate_ranges(self, array: np.ndarray) -> dict[str, Any]:
         """Calculate display ranges for ImageJ."""
         ranges = []
         for c in range(array.shape[2]):  # channels

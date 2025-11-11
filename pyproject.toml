@@ -14,3 +14,29 @@ dependencies = [
 
 [tool.hatch.version]
 source = "vcs"
+
+[tool.pyright]
+venvPath = "."
+venv     = ".venv"
+include = ["src"]
+
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+
+packages = ["src"]
+
+[[tool.mypy.overrides]]
+module = [
+    "numpy.*",
+    "czifile.*",
+    "czitools.*", 
+    "tifffile.*",
+    "oiffile.*",
+    "readlif.*",
+    "oibfile.*",
+    "lif.*",
+    "imagetensors.*"
+]
+ignore_missing_imports = true

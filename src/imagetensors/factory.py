@@ -1,7 +1,10 @@
 """Factory for creating appropriate image readers."""
 
 from pathlib import Path
-from typing import Iterator
+from typing import Iterator, TYPE_CHECKING, Type
+
+if TYPE_CHECKING:
+    from .base import BaseImageReader
 
 from .models import ImageData
 from .readers import (
@@ -24,7 +27,7 @@ class ImageReader:
         >>>     process(image_data.array)
     """
     
-    READERS = {
+    READERS: dict[str, Type[BaseImageReader]] = {
         '.lif': LifImageReader,
         '.czi': CziImageReader,
         '.oib': OibImageReader,
@@ -33,7 +36,7 @@ class ImageReader:
         '.tiff': TifImageReader,
     }
     
-    def __init__(self, file_path: str, override_pixel_size_um: float = None):
+    def __init__(self, file_path: str, override_pixel_size_um: float | None = None):
         """Initialize reader for the given file.
         
         Args:

@@ -1,9 +1,7 @@
 """Nikon ND format reader."""
 
-import os
 import re
-from pathlib import Path
-from typing import Iterator
+from typing import Iterator, cast, Any
 
 import numpy as np
 import tifffile
@@ -19,16 +17,16 @@ class NdImageReader(BaseImageReader):
     Files are assembled into one or more 5D arrays based on stage positions.
     """
     
-    def __init__(self, image_path: str, override_pixel_size_um: float = None):
+    def __init__(self, image_path: str, override_pixel_size_um: float | None = None):
         super().__init__(image_path, override_pixel_size_um)
-        self._nd_config = {}
-        self._stage_count = 1
+        self._nd_config: dict[str, Any] = {}
+        self._stage_count: int = 1
         self._parse_nd_file()
         self._find_associated_files()
         self._extract_metadata_from_tif()
         self._build_file_tree()
     
-    def _parse_nd_file(self):
+    def _parse_nd_file(self) -> None:
         """Parse the ND manifest file."""
         with open(self.path, 'r') as f:
             for line in f:
@@ -45,12 +43,14 @@ class NdImageReader(BaseImageReader):
                     value = '.'.join(parts[1:]).strip()
                 
                 # Type conversion
+                result: str | int | float = value
+
                 if value.isdigit():
-                    value = int(value)
+                    result = int(value)
                 elif '.' in value and value.replace('.', '').isdigit():
-                    value = float(value)
+                    result = float(value)
                 
-                self._nd_config[key] = value
+                self._nd_config[key] = result
         
         # Extract dimensions
         self._metadata = Metadata(source_path=self.path)
@@ -80,7 +80,7 @@ class NdImageReader(BaseImageReader):
         
         self._metadata.begin = 0
     
-    def _find_associated_files(self):
+    def _find_associated_files(self) -> None:
         """Find all files associated with this ND file."""
         base_name = self.path.stem
         parent_dir = self.path.parent
@@ -94,13 +94,14 @@ class NdImageReader(BaseImageReader):
         if not self._associated_files:
             raise ValueError(f"No associated image files found for {self.path}")
     
-    def _extract_metadata_from_tif(self):
+    def _extract_metadata_from_tif(self) -> None:
         """Extract metadata from the first TIF file."""
         if not self._associated_files:
             return
         
         with tifffile.TiffFile(self._associated_files[0]) as tif:
-            tags = tif.pages[0].tags
+            first_page = cast(Any, tif.pages[0])
+            tags = first_page.tags
             
             self._metadata.x_size = int(tags[256].value)  # ImageWidth
             self._metadata.y_size = int(tags[257].value)  # ImageLength
@@ -135,7 +136,7 @@ class NdImageReader(BaseImageReader):
                 self._metadata.x_resolution = 1.0 / (x_res / 10000)
                 self._metadata.y_resolution = 1.0 / (y_res / 10000)
     
-    def _build_file_tree(self):
+    def _build_file_tree(self) -> None:
         """Organize files into a tree structure: stage -> time -> channel -> files."""
         base_path = str(self.path.with_suffix(''))
         
@@ -273,7 +274,7 @@ class NdImageReader(BaseImageReader):
             
             yield ImageData(array=array, metadata=metadata)
     
-    def _calculate_ranges(self, array: np.ndarray) -> dict:
+    def _calculate_ranges(self, array: np.ndarray) -> dict[str, Any]:
         """Calculate display ranges for ImageJ."""
         ranges = []
         for c in range(array.shape[2]):  # channels

@@ -1,0 +1,89 @@
+Project: imagetensors
+Copyright (c) 2024 Bryan Barcelona
+License: MIT License (see LICENSE)
+
+This project depends on third-party software. The packages listed below
+are used under the licenses shown. You must follow each dependency's
+license terms when using, distributing, or bundling this project.
+
+SPDX summary:
+• This project: MIT
+• BSD-3-Clause: czifile, oiffile, tifffile
+• GPL-3.0-or-later (GPLv3): czitools, readlif
+
+Third-Party Components and Attributions
+---------------------------------------
+
+BSD 3-Clause Licensed Components
+(covered by the BSD 3-Clause License — retain copyright & license text)
+
+    • czifile (>=2019.7.2.1)
+      Copyright (c) Christoph Gohlke and contributors
+      License: BSD 3-Clause
+      Notes: Provided and maintained by Christoph Gohlke (https://www.lfd.uci.edu/~gohlke/pythonlibs/#czifile).
+
+    • oiffile (>=2025.5.10)
+      Copyright (c) Christoph Gohlke and contributors
+      License: BSD 3-Clause
+      Notes: Provided and maintained by Christoph Gohlke (https://www.lfd.uci.edu/~gohlke/pythonlibs/#oiffile).
+
+    • tifffile (>=2025.10.16)
+      Copyright (c) Christoph Gohlke and contributors
+      License: BSD 3-Clause
+      Notes: Provided and maintained by Christoph Gohlke (https://www.lfd.uci.edu/~gohlke/pythonlibs/#tifffile).
+
+GPLv3 Licensed Components
+(covered by the GNU General Public License v3; if distributed/bundled,
+the GPLv3 copyleft obligations apply to the combined work per GPL terms)
+
+    • czitools (>=0.11.1)
+      Copyright (c) Sebastian Rhode (sebi06) and contributors
+      License: GNU General Public License v3 (GPLv3)
+      Notes: czitools is GPLv3-licensed. If you distribute or bundle czitools
+             with this project (or modify and distribute it), the distribution
+             must comply with GPLv3. Official repository: https://github.com/sebi06/czitools
+
+    • readlif (>=0.6.6)
+      Copyright (c) Nick Negretti, Arcadia Science, and contributors
+      License: GNU General Public License v3 (GPLv3)
+      Notes: readlif is GPLv3-licensed. If you distribute or bundle readlif
+             with this project (or modify and distribute it), the distribution
+             must comply with GPLv3. Official repository: https://github.com/arcadia-science/readlif
+
+Guidance / Important Notes
+--------------------------
+• This project is released under the MIT License (see LICENSE). That applies
+  only to code authored by Bryan Barcelona in this repository.
+
+• GPLv3 components (czitools, readlif):
+  - You may declare MIT for your project while listing GPLv3 packages as
+    runtime dependencies (e.g., in requirements), **only if**
+    you do not distribute, bundle, or vendor the GPLv3 code with your project.
+  - If you include, modify, or redistribute GPLv3-licensed source or binaries
+    together with your code, the distribution triggers GPLv3 obligations.
+
+• BSD 3-Clause components:
+  - Keep and ship the copyright and license notices for these packages as
+    required by BSD-3-Clause.
+
+• Where to put full texts:
+  - It is recommended to include full license texts in a `LICENSES/` folder:
+      LICENSES/BSD-3-Clause.txt   (copy of BSD 3-Clause)
+      LICENSES/GPL-3.0.txt        (copy of GPLv3)
+  - Keep each dependency’s copyright & license file as shipped when possible.
+
+Suggested quick checklist before release
+---------------------------------------
+1. Confirm you do not vendor/copy any GPLv3 source into your repo.
+2. If you vendor any dependency, include that dependency’s exact license text
+   and respect its attribution requirements.
+3. If you plan to distribute binaries/packages that include GPLv3 components,
+   plan to relicense the distribution under GPLv3 and include GPLv3 source
+   and notices as required.
+
+Contact / Verification
+----------------------
+• You may produce a `LICENSES/` folder with the standard BSD-3-Clause and GPLv3 texts,
+  and individual small license note files for each dependency.
+• You may generate a final NOTICE that substitutes `<Your Project Name>` with the actual
+  project name and inserts exact upstream URLs for each dependency.
