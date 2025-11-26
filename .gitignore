@@ -45,7 +45,6 @@ htmlcov/
 .ipynb_checkpoints/
 
 # uv and pip
-uv.lock
 pip-wheel-metadata/
 .cache/
 
