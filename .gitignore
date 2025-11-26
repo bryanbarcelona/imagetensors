@@ -17,6 +17,11 @@ env/
 venv/
 ENV/
 
+# Caches
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+
 # IDE and editors
 .vscode/
 .idea/
@@ -46,7 +51,6 @@ pip-wheel-metadata/
 
 # Local config overrides
 .pyup.yml
-.pre-commit-config.yaml
 .local.env
 .env
 

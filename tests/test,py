@@ -1,0 +1,15 @@
+from imagetensors.base import BaseImageReader
+
+# Test concrete implementation for testing abstract class
+class ConcreteImageReader(BaseImageReader):
+    """Concrete implementation for testing BaseImageReader."""
+
+    def read(self):
+        # Mock implementation that yields dummy ImageData
+        mock_array = np.random.rand(1, 1, 1, 10, 10).astype(np.uint16)
+        yield ImageData(
+            array=mock_array,
+            pixel_size_um=0.5,
+            metadata={"test": "value"},
+            info_string="test_info"
+        )

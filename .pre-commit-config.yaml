@@ -1,0 +1,57 @@
+default_stages: [pre-commit, pre-push, manual, commit-msg]
+
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.6.9
+    hooks:
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
+        stages: [pre-commit, pre-push, manual]  # Updated to new names (see below)
+      - id: ruff-format
+        stages: [pre-commit, pre-push, manual]
+
+  - repo: local
+    hooks:
+      - id: ty
+        name: ty (type checking)
+        entry: uvx ty check .
+        language: system
+        types: [python]
+        pass_filenames: false
+        stages: [pre-commit, pre-push, manual]
+
+      - id: pytest
+        name: pytest
+        entry: uv run pytest
+        language: system
+        types: [python]
+        pass_filenames: false
+        always_run: true
+
+      - id: pip-audit
+        name: pip-audit + cache cleanup
+        entry: >-
+          uv run python -c "import subprocess, shutil, os; subprocess.run(['uv','run','pip-audit','--skip-editable'], check=False); cache = os.getenv('LOCALAPPDATA') or os.path.expanduser('~/Library/Caches') or os.path.expanduser('~/.cache'); shutil.rmtree(os.path.join(cache,'pip-audit'), ignore_errors=True)"
+        language: python
+        pass_filenames: false
+        always_run: true
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+        stages: [pre-commit, pre-push, manual]
+      - id: end-of-file-fixer
+        stages: [pre-commit, pre-push, manual]
+      - id: check-toml
+        stages: [pre-commit, pre-push, manual]
+      - id: check-yaml
+        stages: [pre-commit, pre-push, manual]
+      - id: check-added-large-files
+        stages: [pre-commit, pre-push, manual]
+
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v4.10.0
+    hooks:
+      - id: commitizen
+        stages: [commit-msg]

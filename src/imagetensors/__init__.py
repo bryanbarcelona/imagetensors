@@ -12,16 +12,15 @@ Supported formats:
 
 Example:
     >>> from imagetensors import ImageReader
-    >>> 
-    >>> reader = ImageReader("path/to/image.lif")
+    >>> reader = ImageReader('path/to/image.lif')
     >>> for image_data in reader:
-    >>>     # image_data.array is 5D numpy array (TZCYX)
-    >>>     # image_data.metadata contains all metadata
+    >>> # image_data.array is 5D numpy array (TZCYX)
+    >>> # image_data.metadata contains all metadata
     >>>     process(image_data.array)
 """
 
+from .converters import save_all_as_tif, save_as_tif
 from .factory import ImageReader
 from .models import ImageData, Metadata
-from .converters import save_as_tif, save_all_as_tif
 
-__all__ = ["ImageReader", "ImageData", "Metadata", "save_as_tif", "save_all_as_tif"]
+__all__ = ['ImageData', 'ImageReader', 'Metadata', 'save_all_as_tif', 'save_as_tif']
