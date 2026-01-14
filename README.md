@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="images/logo.png" alt="Image Tensors" width="30%">
+  <img src="https://github.com/bryanbarcelona/imagetensors/raw/main/images/logo.png" alt="Image Tensors" width="30%">
 </p>
 
 ## 🔬 imagetensors: Unified Microscopy Image Reading
@@ -69,7 +69,7 @@ from imagetensors import ImageReader
 from pathlib import Path
 
 # Initialize the reader for any supported file
-file_path = "path/to/my_multi_series_image.lif" 
+file_path = "path/to/my_multi_series_image.lif"
 reader = ImageReader(file_path)
 
 # ImageReader is iterable, allowing you to process one series at a time
@@ -80,16 +80,16 @@ for idx, image_data in enumerate(reader):
 
     # Access the 5D NumPy array (T, Z, C, Y, X)
     array = image_data.array
-    
+
     # Access the standardized metadata
     metadata = image_data.metadata
-    
+
     # Print basic info
     print(f"\nSeries {idx + 1}:")
     print(f"  Shape: {array.shape}")
     print(f"  Dtype: {array.dtype}")
     print(f"  Z-Spacing: {metadata.spacing:.4f} µm")
-    
+
     # Example usage: process the image data
     # processed_array = my_analysis_function(array)
 ```
@@ -149,7 +149,7 @@ saved_paths = save_all_as_tif(
     reader=reader,
     output_dir=output_directory,
     # Template uses {stem} of the original file and {series} index
-    name_template="{stem}_S{series}.tif", 
+    name_template="{stem}_S{series}.tif",
     compression='zlib'
 )
 
@@ -168,9 +168,9 @@ You can optionally override the pixel size read from the file's metadata during 
 ```python
 # Force all images from this file to use a 0.1 µm pixel size
 reader = ImageReader(
-    file_path="path/to/image.oib", 
+    file_path="path/to/image.oib",
     override_pixel_size_um=0.1
-) 
+)
 
 for image_data in reader:
     # image_data.metadata.x_resolution and y_resolution will be 0.1
