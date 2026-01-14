@@ -76,6 +76,8 @@ exclude = ["imagetensors"]
 [tool.commitizen]
 version_provider = "uv"
 tag_format = "v${version}"
+major_version_zero = true
+bump_message = "release $current_version → $new_version [skip-ci]"
 
 [[tool.uv.index]]
 name = "pypi"
