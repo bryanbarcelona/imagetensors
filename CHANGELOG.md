@@ -1,3 +1,10 @@
+## v0.2.1 (2026-01-14)
+
+### Fix
+
+- update image fetch in README to raw path for compatibility with PyPI auto docs
+- update workflow yml files
+
 ## v0.2.0 (2025-11-26)
 
 ### Feat

@@ -1,6 +1,6 @@
 [project]
 name = "imagetensors"
-version = "0.2.0"
+version = "0.2.1"
 description = "imagetensors provides a standardized, unified interface for reading multiple proprietary microscopy image formats, converting them into standardized 5D NumPy arrays (T, Z, C, Y, X) for seamless downstream analysis and processing."
 readme = "README.md"
 requires-python = ">=3.12"
